@@ -6,7 +6,7 @@ public class ShellSortSize implements ShellSortInterface {
         for (int gap = n / 2; gap > 0; gap /= 2) {
             for (int i = gap; i < n; i++){
                 Barrel temp = barrels[i];
-                for (j = i; (j >= gap) && (barrels[j - gap].size > temp.size); j -= gap) {
+                for (j = i; (j >= gap) && (barrels[j - gap].getVolume() > temp.getVolume()); j -= gap) {
                     barrels[j] = barrels[j - gap];
                 }
                 barrels[j] = temp;
