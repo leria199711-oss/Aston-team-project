@@ -68,25 +68,31 @@ public class ConsoleUI {
     private void createBarrels(){
         System.out.println("Введите желаемую длину массива: ");
         int length = readInt();
-        if (length <= 0){
+        if (length <= 0) {
             System.out.println("Длина должна быть больше 0!");
             return;
         }
-        System.out.println("\n--- Способо заполнения ---");
+
+        System.out.println("\n--- Способ заполнения ---");
         System.out.println("1. Из файла (с валидацией)");
         System.out.println("2. Случайная генерация");
         System.out.println("3. Ручной ввод (используя Builder)");
         int choice = readInt();
-        switch (choice){
-            case 1 -> loadFromFile(length);
-            case 2 -> generateRandom(length);
-            case 3 -> manualInput(length);
+
+        InputSource source;
+        switch (choice) {
+            case 1 -> source = new FileInputSource(java.nio.file.Path.of("src/main/resources/barrels.csv"));
+            case 2 -> source = new RandomInputSource();
+            case 3 -> source = new ManualInputSource(scanner);
             default -> {
                 System.out.println("Отмена: неверный выбор способа.");
                 return;
             }
         }
+        java.util.List<Barrel> list = source.load(length);
+        barrels = list.toArray(new Barrel[0]);
         hasData = true;
+        System.out.println("Массив заполнен: " + barrels.length);
     }
     private void sortBarrels() {
         if (!hasData) {
