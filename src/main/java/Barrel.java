@@ -62,7 +62,7 @@ public class Barrel {
             return this;
         }
         public Barrel build(){
-            if (volume < 0) {
+            if (volume <= 0) {
                 throw new IllegalArgumentException("Volume must be greater than 0");
             }
             if (storedMaterial == null || storedMaterial.isEmpty()) {
