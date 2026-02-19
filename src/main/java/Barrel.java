@@ -1,4 +1,5 @@
 import java.util.Objects;
+import java.util.Locale;
 
 public class Barrel {
     private final double volume;
@@ -37,11 +38,8 @@ public class Barrel {
 
     @Override
     public String toString() {
-        return "Barrel{" +
-                "volume=" + volume +
-                ", material='" + material + '\'' +
-                ", storedMaterial='" + storedMaterial + '\'' +
-                '}';
+        return String.format(Locale.US,"Бочка [объем: %.2f, материал: %s, хранимый материал: %s]",
+                volume, material, storedMaterial);
     }
 
     public static class Builder {
