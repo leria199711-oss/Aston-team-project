@@ -14,10 +14,9 @@
 3. Выход
 
 ## Формат входного файла
-Файл лежит: `src/main/resources/barrels.csv`
+Файл лежит: `src/main/resources/barrels.txt`
 
 Формат строк: 
-volume;material;storedMaterial
 10;Сталь;Вода
 5.5;Железо;Масло
 20;Дерево;Песок
