@@ -80,8 +80,8 @@ public class FileInputSource implements InputSource {
                     "Строка " + lineNumber + ": ожидается 3 поля, разделенных ';'");
         }
         double volume = parseVolume(parts[0].trim(), lineNumber);
-        String storedMaterial = parts[1].trim();
-        String material = parts[2].trim();
+        String material = parts[1].trim();
+        String storedMaterial = parts[2].trim();
 
         if (volume <= 0) {
             throw new IllegalArgumentException("Строка " + lineNumber +

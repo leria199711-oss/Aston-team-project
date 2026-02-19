@@ -47,8 +47,8 @@ public class ManualInputSource implements InputSource {
     private Barrel readOneBarrel(int index) {
         System.out.println("--- Бочка " + index + " ---");
         double volume = readVolume();
-        String storedMaterial = readStoredMaterial();
         String material = readMaterial();
+        String storedMaterial = readStoredMaterial();
         return new Barrel.Builder()
                 .setVolume(volume)
                 .setMaterial(material)
