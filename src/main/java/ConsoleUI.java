@@ -85,6 +85,7 @@ public class ConsoleUI {
         System.out.println("1. Объем");
         System.out.println("2. Хранимый материал");
         System.out.println("3. Материал изготовления");
+        System.out.println("4. Особая сортировка");
 
         int fieldChoice = readInt();
 
@@ -93,6 +94,7 @@ public class ConsoleUI {
             case 1 -> key = "size";
             case 2 -> key = "filling";
             case 3 -> key = "material";
+            case 4 -> key = "custom";
             default -> {
                 System.out.println("Неверное поле.");
                 return;

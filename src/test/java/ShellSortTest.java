@@ -93,5 +93,35 @@ public class ShellSortTest {
             assertEquals(expected[i].getMaterial(), barrels[i].getMaterial(), "Неправильная сортировка по материалу");
         }
     }
+    @Test
+    public void testShellSortCustom() {
+        Barrel[] barrels = {
+                new Barrel.Builder().setVolume(9.0).setMaterial("A").setStoredMaterial("DA").build(),
+                new Barrel.Builder().setVolume(12.0).setMaterial("B").setStoredMaterial("AA").build(),
+                new Barrel.Builder().setVolume(11.0).setMaterial("A").setStoredMaterial("BA").build(),
+                new Barrel.Builder().setVolume(14.0).setMaterial("C").setStoredMaterial("AS").build(),
+                new Barrel.Builder().setVolume(8.0).setMaterial("C").setStoredMaterial("BB").build(),
+                new Barrel.Builder().setVolume(14.0).setMaterial("B").setStoredMaterial("AS").build(),
+                new Barrel.Builder().setVolume(10.0).setMaterial("D").setStoredMaterial("AR").build(),
+                new Barrel.Builder().setVolume(16.0).setMaterial("A").setStoredMaterial("RA").build()
+        };
+
+        Barrel[] expected = {
+                new Barrel.Builder().setVolume(9.0).setMaterial("A").setStoredMaterial("DA").build(),
+                new Barrel.Builder().setVolume(8.0).setMaterial("C").setStoredMaterial("BB").build(),
+                new Barrel.Builder().setVolume(11.0).setMaterial("A").setStoredMaterial("BA").build(),
+                new Barrel.Builder().setVolume(10.0).setMaterial("D").setStoredMaterial("AR").build(),
+                new Barrel.Builder().setVolume(12.0).setMaterial("B").setStoredMaterial("AA").build(),
+                new Barrel.Builder().setVolume(14.0).setMaterial("C").setStoredMaterial("AS").build(),
+                new Barrel.Builder().setVolume(14.0).setMaterial("B").setStoredMaterial("AS").build(),
+                new Barrel.Builder().setVolume(16.0).setMaterial("A").setStoredMaterial("RA").build()
+        };
+
+        ShellSortInterface sorter = new ShellCustomSorting();
+        sorter.shellSort(barrels);
+        for (int i = 0; i < barrels.length; i++) {
+            assertEquals(expected[i].getVolume(), barrels[i].getVolume(), "Неправильная пользовательская сортировка");
+        }
+    }
 }
 
