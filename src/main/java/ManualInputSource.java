@@ -1,6 +1,6 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 /**
  * Источник данных для ручного ввода бочек с консоли.
@@ -31,11 +31,9 @@ public class ManualInputSource implements InputSource {
         if (size <= 0) {
             throw new IllegalArgumentException("Размер должен быть положительным, получено: " + size);
         }
-        List<Barrel> barrels = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            barrels.add(readOneBarrel(i + 1));
-        }
-        return barrels;
+        return BarrelList.fromStream(
+                IntStream.range(0, size).mapToObj(i -> readOneBarrel(i + 1))
+        );
     }
 
     /**
