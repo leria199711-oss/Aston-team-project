@@ -1,6 +1,6 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 /**
  * Источник данных, генерирующий случайные бочки.
@@ -38,11 +38,9 @@ public class RandomInputSource implements InputSource {
         if (size <= 0) {
             throw new IllegalArgumentException("Размер должен быть положительным, получено: " + size);
         }
-        List<Barrel> barrels = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            barrels.add(createRandomBarrel());
-        }
-        return barrels;
+        return BarrelList.fromStream(
+                IntStream.range(0, size).mapToObj(i -> createRandomBarrel())
+        );
     }
 
     /**
