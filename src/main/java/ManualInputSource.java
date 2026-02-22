@@ -1,31 +1,21 @@
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
 /**
  * Источник данных для ручного ввода бочек с консоли.
- * Пользователь последовательно вводит объём, хранимый материал и материал изготовления.
+ * Пользователь последовательно вводит объём, материал изготовления и хранимый материал.
  * Каждое поле проверяется сразу; при ошибке ввод повторяется для этого же поля.
  */
 public class ManualInputSource implements InputSource {
     private final Scanner scanner;
+    private static final int MAX_ATTEMPTS = 100; // защита от зацикливания
 
-    /**
-     * Создаёт источник с заданным сканером для чтения ввода.
-     *
-     * @param scanner сканер, связанный с консолью (обычно System.in)
-     */
     public ManualInputSource(Scanner scanner) {
         this.scanner = scanner;
     }
 
-    /**
-     * Запрашивает у пользователя указанное количество бочек.
-     *
-     * @param size количество бочек для ввода (должно быть положительным)
-     * @return список введённых бочек
-     * @throws IllegalArgumentException если size <= 0
-     */
     @Override
     public List<Barrel> load(int size) {
         if (size <= 0) {
@@ -36,12 +26,6 @@ public class ManualInputSource implements InputSource {
         );
     }
 
-    /**
-     * Вводит одну бочку с порядковым номером.
-     *
-     * @param index номер бочки (для вывода пользователю)
-     * @return созданный объект Barrel
-     */
     private Barrel readOneBarrel(int index) {
         System.out.println("--- Бочка " + index + " ---");
         double volume = readVolume();
@@ -60,23 +44,32 @@ public class ManualInputSource implements InputSource {
      * @return введённое положительное конечное число
      */
     private double readVolume() {
-        while (true) {
-            System.out.print("Объём (положительное число): ");
-            String line = scanner.nextLine();
-            if (line.isBlank()) {
-                System.out.println("Введите число.");
-                continue;
+        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+            Optional<Double> result = tryReadVolume();
+            if (result.isPresent()) {
+                return result.get();
             }
-            try {
-                double value = Double.parseDouble(line.trim().replace(',', '.'));
-                if (value <= 0 || Double.isNaN(value) || Double.isInfinite(value)) {
-                    System.out.println("Объём должен быть положительным конечным числом.");
-                    continue;
-                }
-                return value;
-            } catch (NumberFormatException e) {
-                System.out.println("Неверный формат числа. Попробуйте снова.");
+        }
+        throw new IllegalArgumentException("Слишком много неудачных попыток ввода объёма");
+    }
+
+    private Optional<Double> tryReadVolume() {
+        System.out.print("Объём (положительное число): ");
+        String line = scanner.nextLine();
+        if (line.isBlank()) {
+            System.out.println("Введите число.");
+            return Optional.empty();
+        }
+        try {
+            double value = Double.parseDouble(line.trim().replace(',', '.'));
+            if (value <= 0 || Double.isNaN(value) || Double.isInfinite(value)) {
+                System.out.println("Объём должен быть положительным конечным числом.");
+                return Optional.empty();
             }
+            return Optional.of(value);
+        } catch (NumberFormatException e) {
+            System.out.println("Неверный формат числа. Попробуйте снова.");
+            return Optional.empty();
         }
     }
 
@@ -86,20 +79,28 @@ public class ManualInputSource implements InputSource {
      * @return непустая строка, содержащая только буквы, пробелы и дефисы
      */
     private String readStoredMaterial() {
-        while (true) {
-            System.out.print("Хранимый материал (только буквы, пробелы, дефисы): ");
-            String line = scanner.nextLine();
-            if (line.isBlank()) {
-                System.out.println("Значение не может быть пустым.");
-                continue;
+        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+            Optional<String> result = tryReadStoredMaterial();
+            if (result.isPresent()) {
+                return result.get();
             }
-            String value = line.trim();
-            if (!value.matches("[\\p{L}\\s-]+")) {
-                System.out.println("Хранимый материал должен содержать только буквы, пробелы и дефисы.");
-                continue;
-            }
-            return value;
         }
+        throw new IllegalArgumentException("Слишком много неудачных попыток ввода хранимого материала");
+    }
+
+    private Optional<String> tryReadStoredMaterial() {
+        System.out.print("Хранимый материал (только буквы, пробелы, дефисы): ");
+        String line = scanner.nextLine();
+        if (line.isBlank()) {
+            System.out.println("Значение не может быть пустым.");
+            return Optional.empty();
+        }
+        String value = line.trim();
+        if (!value.matches("[\\p{L}\\s-]+")) {
+            System.out.println("Хранимый материал должен содержать только буквы, пробелы и дефисы.");
+            return Optional.empty();
+        }
+        return Optional.of(value);
     }
 
     /**
@@ -108,19 +109,27 @@ public class ManualInputSource implements InputSource {
      * @return непустая строка, содержащая только буквы, пробелы и дефисы
      */
     private String readMaterial() {
-        while (true) {
-            System.out.print("Материал изготовления (только буквы, пробелы, дефисы): ");
-            String line = scanner.nextLine();
-            if (line.isBlank()) {
-                System.out.println("Значение не может быть пустым.");
-                continue;
+        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+            Optional<String> result = tryReadMaterial();
+            if (result.isPresent()) {
+                return result.get();
             }
-            String value = line.trim();
-            if (!value.matches("[\\p{L}\\s-]+")) {
-                System.out.println("Материал изготовления должен содержать только буквы, пробелы и дефисы.");
-                continue;
-            }
-            return value;
         }
+        throw new IllegalArgumentException("Слишком много неудачных попыток ввода материала изготовления");
+    }
+
+    private Optional<String> tryReadMaterial() {
+        System.out.print("Материал изготовления (только буквы, пробелы, дефисы): ");
+        String line = scanner.nextLine();
+        if (line.isBlank()) {
+            System.out.println("Значение не может быть пустым.");
+            return Optional.empty();
+        }
+        String value = line.trim();
+        if (!value.matches("[\\p{L}\\s-]+")) {
+            System.out.println("Материал изготовления должен содержать только буквы, пробелы и дефисы.");
+            return Optional.empty();
+        }
+        return Optional.of(value);
     }
 }
