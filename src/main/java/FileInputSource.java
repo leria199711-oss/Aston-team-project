@@ -1,9 +1,8 @@
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Источник данных, читающий бочки из текстового файла.
@@ -40,21 +39,14 @@ public class FileInputSource implements InputSource {
      */
     @Override
     public List<Barrel> load(int size) {
-        List<Barrel> barrels = new ArrayList<>();
-        int lineNumber = 0;
-        try (BufferedReader reader = Files.newBufferedReader(path)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                lineNumber++;
-                if (line.isBlank()) continue;
-                if (size > 0 && barrels.size() >= size) break;
-                try {
-                    Barrel barrel = parseLine(line, lineNumber);
-                    barrels.add(barrel);
-                } catch (IllegalArgumentException e) {
-                    throw e;
-                }
-            }
+        try {
+            List<String> lines = Files.readAllLines(path);
+            BarrelList barrels = BarrelList.fromStream(
+                    IntStream.range(0, lines.size())
+                            .filter(i -> !lines.get(i).isBlank())
+                            .limit(size > 0 ? size : Integer.MAX_VALUE)
+                            .mapToObj(i -> parseLine(lines.get(i), i + 1))
+            );
             if (barrels.isEmpty()) {
                 throw new IllegalArgumentException("В файле нет корректных данных");
             }
