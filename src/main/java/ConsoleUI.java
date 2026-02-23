@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.nio.file.Path;
 
@@ -29,13 +32,15 @@ public class ConsoleUI {
         System.out.println("\n=== Главное меню ===");
         System.out.println("1. Заполнить массив бочек");
         System.out.println("2. Сортировать массив (Shell Sort + Strategy)");
-        System.out.println("3. Выход");
+        System.out.println("3. Поиск количества совпадений элементов.");
+        System.out.println("4. Выход");
         System.out.println("Выберите действие: ");
         int choice = readInt();
         switch (choice) {
             case 1 -> createBarrels();
             case 2 -> sortBarrels();
-            case 3 -> exit();
+            case 3 -> countInThreads();
+            case 4 -> exit();
             default -> System.out.println("Неверный выбор, попробуйте снова");
         }
     }
@@ -120,6 +125,77 @@ public class ConsoleUI {
         }
         for (Barrel b : barrels) {
             System.out.println(b);
+        }
+    }
+
+    private void countInThreads() {
+        if (barrels == null || barrels.length == 0) {
+            System.out.println("Массив пустой. Сначала создайте массив бочек.");
+            return;
+        }
+        List<Barrel> barrelsList = new ArrayList<>(Arrays.asList(barrels));
+        System.out.println("""
+                По какому параметру производить подсчет одинаковых элементов?
+                1. Бочка
+                2. Объем
+                3. Материал
+                4. Наполнение бочки
+                """
+        );
+        int fieldChoice = readInt();
+        switch (fieldChoice) {
+            case 1 -> {
+                System.out.println("Введите объем бочки: ");
+                double volume = readDouble();
+                System.out.println("Укажите материал бочки: ");
+                String material = readString();
+                System.out.println("Укажите, что внутри бочки: ");
+                String sortedMaterial = readString();
+                Barrel barrel = new Barrel.Builder()
+                        .setVolume(volume)
+                        .setMaterial(material)
+                        .setStoredMaterial(sortedMaterial)
+                        .build();
+                CountElementsInThreads.countSimilarBarrelsInThreads(barrel, barrelsList);
+            }
+            case 2 -> {
+                System.out.println("Введите объем бочки: ");
+                double volume = readDouble();
+                CountElementsInThreads.countSimilarVolumeInThreads(volume, barrelsList);
+            }
+            case 3 -> {
+                System.out.println("Укажите материал бочки: ");
+                String material = readString();
+                CountElementsInThreads.countSimilarMaterialInThreads(material, barrelsList);
+            }
+            case 4 -> {
+                System.out.println("Укажите, что внутри бочки: ");
+                String sortedMaterial = readString();
+                CountElementsInThreads.countSimilarStoredMaterialInThreads(sortedMaterial, barrelsList);
+            }
+        }
+    }
+
+    private double readDouble() {
+        while (true) {
+            try {
+                String input = scanner.nextLine().trim();
+                input = input.replace(',', '.');
+                return Double.parseDouble(input);
+            } catch (Exception e) {
+                System.out.println("Ошибка! Вы можете ввести целое или десятичное число (для разделения используйте ',' или '.': ");
+            }
+        }
+    }
+
+    private String readString() {
+        while (true) {
+            String input = scanner.nextLine().trim();
+            if (!input.isEmpty()) {
+                return input;
+            } else {
+                System.out.println("Вы ничего не ввели. Необходимо ввести значение.");
+            }
         }
     }
 }

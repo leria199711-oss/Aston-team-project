@@ -1,5 +1,4 @@
 import java.util.Objects;
-import java.util.Locale;
 
 public class Barrel {
     private final double volume;
@@ -28,7 +27,9 @@ public class Barrel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Barrel barrel = (Barrel) o;
-        return Double.compare(barrel.volume, volume) == 0 && Objects.equals(material, barrel.material) && Objects.equals(storedMaterial, barrel.storedMaterial);
+        double roundedThis = Math.round(this.volume * 100.0) / 100.0;
+        double roundedOther = Math.round(((Barrel) o).getVolume() * 100.0) / 100.0;
+        return roundedThis==roundedOther && Objects.equals(material, barrel.material) && Objects.equals(storedMaterial, barrel.storedMaterial);
     }
 
     @Override
@@ -38,7 +39,7 @@ public class Barrel {
 
     @Override
     public String toString() {
-        return String.format(Locale.US,"Бочка [объем: %.2f, материал: %s, хранимый материал: %s]",
+        return String.format("Бочка [объем: %.2f м3, материал: %s, хранимый материал: %s]",
                 volume, material, storedMaterial);
     }
 
