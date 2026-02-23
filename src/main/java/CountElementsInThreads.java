@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 public class CountElementsInThreads {
     private final static int NUMBER_OF_THREADS = 4;
-    private final static int NUMBER_IN_COLLECTION_COUNT_WITHOUT_THREADS = 100;
+    private final static int NUMBER_IN_COLLECTION_COUNT_WITHOUT_THREADS = 50;
 
     public static int countSimilarBarrelsInThreads(Barrel targetBarrel, List<Barrel> barrels) {
         return countByCondition(barrel -> barrel.equals(targetBarrel), barrels);
@@ -49,38 +49,36 @@ public class CountElementsInThreads {
                     count++;
                 }
             }
-            return count;
-        }
+        } else {
 
-        List<List<Barrel>> chunks = getChunks(barrels);
-        if (chunks.isEmpty()) {
-            System.out.println("Это пустая коллекция.");
-            return count;
-        }
-
-        ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-        List<Future<Integer>> futures = new ArrayList<>();
-
-        for(List<Barrel> chunk : chunks) {
-            Future<Integer> future = executorService.submit(() -> {
-                int countInChunk = 0;
-                for (Barrel barrel : chunk) {
-                    if (condition.test(barrel)) {
-                        countInChunk++;
-                    }
-                }
-                return countInChunk;
-            });
-            futures.add(future);
-        }
-        for (Future<Integer> future : futures){
-            try {
-                count += future.get();
-            } catch (InterruptedException| ExecutionException e) {
-                throw new RuntimeException("Ошибка в потоке подсчета" + e);
+            List<List<Barrel>> chunks = getChunks(barrels);
+            if (chunks.isEmpty()) {
+                System.out.println("Это пустая коллекция.");
+                return count;
             }
+            ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+            List<Future<Integer>> futures = new ArrayList<>();
+            for (List<Barrel> chunk : chunks) {
+                Future<Integer> future = executorService.submit(() -> {
+                    int countInChunk = 0;
+                    for (Barrel barrel : chunk) {
+                        if (condition.test(barrel)) {
+                            countInChunk++;
+                        }
+                    }
+                    return countInChunk;
+                });
+                futures.add(future);
+            }
+            for (Future<Integer> future : futures) {
+                try {
+                    count += future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException("Ошибка в потоке подсчета" + e);
+                }
+            }
+            executorService.shutdown();
         }
-        executorService.shutdown();
         System.out.println("Колличество совпадений: " + count);
         return count;
     }
