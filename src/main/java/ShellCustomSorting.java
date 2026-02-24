@@ -1,5 +1,4 @@
 public class ShellCustomSorting implements ShellSortInterface{
-
     public void shellSort(Barrel[] barrels){
         for (int gap = barrels.length / 2; gap > 0; gap /= 2) {
             for (int i = gap; i < barrels.length; i++){
@@ -24,7 +23,7 @@ public class ShellCustomSorting implements ShellSortInterface{
                                         Barrel temp = barrels[k];
                                         barrels[k] = barrels[j + gap];
                                         barrels[j + gap] = temp;
-                                        j = k;
+                                        j = k - gap;
                                     }
                                 } else {
                                     k = k - gap;
