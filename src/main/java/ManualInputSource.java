@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
  */
 public class ManualInputSource implements InputSource {
     private final Scanner scanner;
-    private static final int MAX_ATTEMPTS = 100; // защита от зацикливания
+    private static final int MAX_ATTEMPTS = 100;
 
     public ManualInputSource(Scanner scanner) {
         this.scanner = scanner;
